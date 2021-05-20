@@ -4,15 +4,19 @@ import java.io.IOException;
 class Main {
 
 	public static void main(String[] args) throws IOException {
-		
+
 		MedidorTempo medidor = new MedidorTempo();
 		DebugArvore debug = new DebugArvore();
+		int ordem = 2;
 
 		medidor.comeca("ArvoreB");
 
-		ArvoreB arvB = new ArvoreB(4, "arv.txt");
+		ArvoreB arvB = new ArvoreB(ordem, "arv.txt");
 		No no = arvB.getRaiz();
+
+		debug.imprimeArvore(arvB);
    
+   /*
     	arvB.insereChave(9);
 		arvB.insereChave(10);
 		arvB.insereChave(6);
@@ -25,14 +29,12 @@ class Main {
 		System.out.println(" ----------------------- ");
 		System.out.print("RAIZ DA ARVORE: ");
 		arvB.mostrar();
+		*/
 
-  		System.out.println("\n...... Imprimindo arvore da RAM ......");
-		debug.imprimeArvore(arvB);
+  		
+		
     
-    
-		System.out.println("\n...... Imprimindo arvore do DISCO ......");
-		ArvoreB arvB2 = new ArvoreB(3, "arv.txt");
-		debug.imprimeArvore(arvB2);
+
     
   /* 
     if (arvB.buscaB(11)) {

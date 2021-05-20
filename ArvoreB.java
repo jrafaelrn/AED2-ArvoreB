@@ -17,7 +17,8 @@ public class ArvoreB {
 	private static final int NULL = -1;
 	private static final int BLOCO_VAZIO = -2;
 	private static final int END_CABECA_PILHA_BLOCOS_VAZIOS = 0;
-	private static final int END_APONTADOR_RAIZ = 4;
+	//private static final int END_APONTADOR_RAIZ = 4;
+	private static int END_APONTADOR_RAIZ = 1;
 	private static final int END_TAMANHO = 8;
 	private static final int TAMANHO_CABECALHO = 3 * 4;
 	private static final int TRUE = 1;
@@ -34,7 +35,9 @@ public class ArvoreB {
 	  	this.raiz = new No(true, t);  
 	  	this.nomeArq = nomeArq;    	
 
+
     	RandomAccessFile arq = new RandomAccessFile(nomeArq, "rw");
+		byte[] enderecoRaiz = new byte[4];
       
 		  //Caso a árvore não exista.
     	if (arq.length() == 0) {
@@ -42,12 +45,26 @@ public class ArvoreB {
 			System.out.println("\n !! Criando arvore !! ");
     		
 			//Escrevendo o cabeçalho, ou seja, o primeiro end da árvore.      		
+			System.out.println("Gravando NO_RAIZ: " + raiz + " - Endereco: " + END_APONTADOR_RAIZ);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream(4);
+			escreveInt(out, END_APONTADOR_RAIZ);
+			arq.write(out.toByteArray());
+			//writeInt?
+
 			gravaNo(raiz,END_APONTADOR_RAIZ);
       
 		//Se existe apenas leia.
 		} else { 
+
 			System.out.println("\n !! Lendo arvore do disco !! ");
+			
+			ByteArrayInputStream in = new ByteArrayInputStream(enderecoRaiz);	
+			END_APONTADOR_RAIZ = leInt(in);
+			
 			raiz = leNo(END_APONTADOR_RAIZ);
+			System.out.println("NO_RAIZ lido disco: " + raiz + " - Endereco: " + END_APONTADOR_RAIZ);
+
 		}
 		
 		arq.close();
@@ -165,7 +182,7 @@ public class ArvoreB {
 
 	public int gravaNovoNo(No no) throws IOException {
     
-	  int nBytes = no.ehFolha() ? TAMANHO_NO_FOLHA : TAMANHO_NO_INTERNO;
+	  	int nBytes = no.ehFolha() ? TAMANHO_NO_FOLHA : TAMANHO_NO_INTERNO;
 		ByteArrayOutputStream out = new ByteArrayOutputStream(nBytes);
 		
 		escreveInt(out, no.folha);
@@ -211,13 +228,13 @@ public class ArvoreB {
 		auxiliar.nChaves = t - 1;
 
 		//Copia as chaves
-		for(int j = 1 ; j < t - 1; j++){
+		for(int j = 0 ; j < t - 1; j++){
 			auxiliar.chaves[j] = y.chaves[j + t];
 		}
 
 		//Copia os filhos
 		if(!y.ehFolha()){
-			for(int j = 1; j < t; j++) {
+			for(int j = 0; j < t; j++) {
 				auxiliar.filhos[j] = y.filhos[j+t];
 			}
 		}
