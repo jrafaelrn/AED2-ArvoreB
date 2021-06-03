@@ -17,7 +17,7 @@ class Main {
 
 	public static void main(String[] args) throws IOException {
 		
-		int ordem = 3;
+		int ordem = 4;
 		String nomeArvore = "arvore_b.txt";
 		DebugArvore debug = new DebugArvore();
 		ArvoreB arvB = new ArvoreB(ordem,nomeArvore);
@@ -33,10 +33,12 @@ class Main {
 		arvB.insereChave(8);
 		arvB.insereChave(9);
     
-
+	
 
 	
 	    debug.imprimeArvore(arvB);
+
+		arvB.remove(4);
 		
 		if (arvB.buscaB(2))
 			System.out.println("Número encontrado");
