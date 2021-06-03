@@ -11,7 +11,7 @@ import java.util.Stack;
 
 public class ArvoreB {
 
-  private static final int NULL = -1;
+  	private static final int NULL = -1;
 	private static final int TRUE = 1;
 	private static final int FALSE = 0;
 	private static final int TAMANHO_CABECALHO = 4;
@@ -21,6 +21,7 @@ public class ArvoreB {
 	private int TAMANHO_NO_INTERNO;
 	private int TAMANHO_NO_FOLHA;
 	private int NUM_MAX_CHAVES;
+	private int NUM_MIN_CHAVES;
 	private int NUM_MAX_FILHOS;
 
 
@@ -30,6 +31,7 @@ public class ArvoreB {
 		TAMANHO_NO_FOLHA = 2 * 4 + 4 * (2 * t - 1);
 		NUM_MAX_CHAVES = 2 * t - 1;
 		NUM_MAX_FILHOS = NUM_MAX_CHAVES + 1;
+		NUM_MIN_CHAVES = t - 1;
 	}
 
 
@@ -55,7 +57,7 @@ public class ArvoreB {
 			//Caso exista apenas lê o endereço que está localizado o nó raiz;
 			carregaRaizNaRAM();
       
-   }
+   		}
    }
      
 
@@ -77,8 +79,8 @@ public class ArvoreB {
 	private void carregaRaizNaRAM() throws FileNotFoundException, IOException {
 		RandomAccessFile arq = new RandomAccessFile(nomeArq, "r");
 		this.raiz = leNo(arq.readInt());
-    System.out.println(" \n");
-    System.out.println("TAMANHO ARQ " + arq.length());
+    	System.out.println(" \n");
+    	System.out.println("TAMANHO ARQ " + arq.length());
 		arq.close();
 	}
 
@@ -142,7 +144,7 @@ public class ArvoreB {
 		return ByteBuffer.wrap(bInt).asIntBuffer().get();//converte os bytes em int.
 	}
 
-   private void escreveInt(ByteArrayOutputStream out, int i) {
+    private void escreveInt(ByteArrayOutputStream out, int i) {
 		byte[] num = ByteBuffer.allocate(4).putInt(i).array();
 		out.write(num, 0, 4);
 	}
@@ -217,7 +219,7 @@ public class ArvoreB {
 	*/
 	private void split(No x, int i, No y) throws IOException { 
   
-		//System.out.println("\n\n\n !!!!  SPLIT   !!!\n");
+		//System.out.println("\n !!!!  SPLIT   !!!\n");
     	
     	
 		boolean yEhFolha =  y.ehFolha();//Passa um valor booleano do Nó y.
@@ -262,7 +264,7 @@ public class ArvoreB {
 	
 		//Apenas atualiza os Nó no arquivo.
     	atualizaNo(y);
-		  atualizaNo(x);
+		atualizaNo(x);
 	}
 
 
@@ -276,7 +278,7 @@ public class ArvoreB {
 	//Insere valor da chave;
 	public void insereChave(int key) throws IOException{
   		
-		//System.out.println("\n\n\n !!!!  insereChave   !!!\n");
+		//System.out.println("Inserindo Chave: " + key);
 	   	No r = raiz;
      
 		//Verifica se a raiz está cheia, se estiver divide o Nó raiz.
@@ -305,16 +307,13 @@ public class ArvoreB {
 
 	private void insereNo_NoFull(No x, int key) throws IOException{
    		
-		//System.out.println("\n\n\n !!!!  InsereNo_NoFull   !!!\n");
-   		
+		//System.out.println("...Inserindo em No_NoFull");   		
 		
 		if (x.ehFolha()){
 
 			int i = 0;
 		
-			for(i = x.nChaves-1; i >= 0 && key < x.chaves[i]; i--){
-			
-			
+			for(i = x.nChaves-1; i >= 0 && key < x.chaves[i]; i--){			
 				x.chaves[i+1] = x.chaves[i];
 			}
 
@@ -343,7 +342,7 @@ public class ArvoreB {
 				}
       		}
     
-    	insereNo_NoFull(leNo(x.filhos[i]),key);
+    		insereNo_NoFull(leNo(x.filhos[i]),key);
 
 		}
 
@@ -432,186 +431,71 @@ public class ArvoreB {
 
 	//Remove chave;
 	private void remove(No no, int chave) throws IOException {
-  		
-		System.out.println("\n\n\nINICIANDO A REMOÇÃO - CHAVE " + chave +"\n");
 
-  		int pos = no.buscaChave(chave);//primeiro buscar a chave no array de chaves
+		// Preemtive MERGE
+		preemtiveMerge(no, chave);
+
   		
-		//System.out.println("Chave Buscada " + pos);
+		// Primeiro busca a chave no array de chaves do No Atual
+  		int pos = no.buscaChave(chave);
   		
-		//A chave precisa ser válida  		
+		System.out.println("\n\n\nINICIANDO REMOÇÃO - CHAVE " + chave +"\n");
+		System.out.println("Posicao Encontrada no inicio " + pos);
+
+  		
+		// Se a chave estiver no NÓ
 		if(pos != NULL) { 
 
-  			//Verifica se CHAVE esta no NO e NO == folha
+			// CASO 1 = Remove de um NÓ FOLHA
 			if (no.ehFolha()){
-
-      			System.out.println("É FOLHA");
-      			int i = 0;
-			
-				//Passa por todas as chaves para encontrar a posição, se encontrar passa para o outro for
-				for (i = 0; i < no.nChaves && no.chaves[i] != chave; i++){
-     			};
-      		
-				System.out.println("chave: " + chave);
-      		
-				//Verifica se a posição chegou até o limite do nó, caso não chegou mova as chaves
-       			//System.out.println("Fora " + i);
-        		
-				for(;i < no.nChaves; i++) { 
-           			
-					//System.out.println("dentro " + i);
-          			if(i != 2 * t - 2){
-            			no.chaves[i] = no.chaves[i+1];
-            			//System.out.println("Caso esteja com a quantidade mínima " + i);
-          			}
-        		}
-			
-				no.nChaves--;//Decrementa a quantidade
-				atualizaNo(no);//Atualiza no DISCO
+				removeChave_noFolha(no, chave);
 				return;
 			}
 
-			//Se não for folha 
-			if(!no.ehFolha()){
-
-				System.out.println("É FILHO");
-				System.out.println("FILHO " + no.filhos[pos]);
-				
-				//PREDECESSOR de nó, maior chave no filho esquerdo
-				No predecessor = leNo(no.filhos[pos]);
-			
-				int auxChave = 0;
-				//No predecessor tem pelo menos t chaves, se tiver é substituído;
-				
-
-				if(predecessor.nChaves >= t-1){ 
-					
-					//executa várias vezes até chegar em uma folha e parar
-					for(;;){
-						if(predecessor.ehFolha()){
-							auxChave = predecessor.chaves[predecessor.nChaves - 1];
-							System.out.println("auxChave " + auxChave);
-							break;
-						} 
-						else { 
-							//Passando todas as chaves do nó para esse predecessor
-							predecessor = leNo(predecessor.filhos[predecessor.nChaves]);
-						}
-					}
-			
-			
-					no.chaves[pos] = auxChave;//Substituindo 
-					System.out.println("Substituindo " + no.chaves[pos]);
-					atualizaNo(no);
-					
-					//Eliminando recursivamente e substituindo por um predecessor
-					remove(predecessor, auxChave);
-					return;
-				}
-			
-				
-				System.out.println("SEGUNDA PARTE");
-				
-				//SUCESSOR, menor chave do filho direito
-				No sucessor = leNo(no.filhos[pos + 1]);
-				
-
-				//No sucessor tem pelo menos t chaves;
-				if(sucessor.nChaves >= t-1){
-					
-					int sucessorChave = sucessor.chaves[0];
-					//É substituído por um sucessor se tiver mais que a ordem 
-					
-					if(!sucessor.ehFolha()){
-						sucessor = leNo(sucessor.filhos[0]);
-					
-						for(;;){ 
-							if(sucessor.ehFolha()){
-								sucessorChave = sucessor.chaves[sucessor.nChaves - 1];
-								break;
-							}
-							else { 
-								sucessor = leNo(sucessor.filhos[sucessor.nChaves]);
-							}
-						}
-					}
-
-				no.chaves[pos] = sucessorChave;
-				atualizaNo(no);
-				remove(sucessor, sucessorChave);
-				return;
-			}
-		
-		
-			int temp = predecessor.nChaves + 1;
-			predecessor.chaves[predecessor.nChaves++] = no.chaves[pos];
-
-			for(int i = 0, j = predecessor.nChaves; i < sucessor.nChaves; i++){
-				predecessor.chaves[j++] = sucessor.chaves[i];
-				predecessor.nChaves++;
-			}
-
-			//Movendo os filhos que está no sucessor para o predecessor
-			for(int i = 0; i < sucessor.nChaves + 1; i++){
-				predecessor.filhos[temp++] = sucessor.filhos[i];
-			}
-			
-			//Substituo o filho que foi removido pelo predecessor 
-			No removido = leNo(no.filhos[pos]);
-			removido = predecessor;
-			
-			//Ocupar as posições das chaves até a última posição
-			for (int i = pos; i < no.nChaves; i++) {
-				if (i != 2 * t - 2) {
-					no.chaves[i] = no.chaves[i + 1];
-				}
-			}
-			
-			//Ocupar as posições dos filhos, até a última posição
-			for (int i = pos + 1; i < no.nChaves + 1; i++) {
-				if (i != 2 * t - 1) {
-					no.filhos[i] = no.filhos[i + 1];
-				}
-			}
-			no.nChaves--;
-			
-			//Caso o nó que vai ser excluído a chave seja da raiz
-			if (no.nChaves == 0) {
-				if (no == raiz) {
-					raiz = leNo(no.filhos[0]);
-					trocaRaiz(no);
-				}
-				no = leNo(no.filhos[0]);
-			}
-			
-			atualizaNo(no);
-			remove(predecessor, chave);
+			//	CASO 2 = Remove de um NÓ INTERNO
+			removeChave_noInterno(no, chave, pos);				
 			return;
-		}
-		
 
+		} 
+		
 		//SEGUNDA PARTE
 
-		/*A altura da árvore diminui. Caso a chave esteja no nó interno e a exclusão da chave levar a um número menor de chaves no nó (ou seja, menos do que o mínimo necessário, usando no.nChaves para saber a quantidade mínima por nó)*/
-		} else { 
-			for(pos = 0; pos < no.nChaves; pos++){
-				if(no.chaves[pos] > chave){
-					break;
-				}
-			}
+		/*A altura da árvore diminui. Caso a chave esteja no nó interno e a exclusão da chave levar a um número menor de chaves no nó (ou seja, menos do que o mínimo necessário, usando no.nChaves para saber a quantidade mínima por nó)*/		 
+
+		System.out.println("Chave nao localizada no No Atual: " + no.endereco);
+		System.out.println("...Iniciando busca pelas chaves...");
 		
+		for(pos = 0; pos < no.nChaves; pos++){
+			
+			System.out.println("\tAvaliando chave[" + pos + "] = " + no.chaves[pos]);
+			
+			if(no.chaves[pos] > chave){
+				System.out.println("\t\tCHAVE[" + pos + "] = " + no.chaves[pos] + " > " + chave);
+				break;
+			}
+		}
+	
 		//Caso o nó já tenha a quantidade mínima, precisa tentar encontrar um predecessor ou sucessor para ele, chamando recursivamente
 		No tmp = leNo(no.filhos[pos]);
+		System.out.println("\nNO Temporario: " + tmp.endereco);
+		System.out.println("\tChaves NO Temporario: " + tmp.nChaves + " > " + t);
+
+		/*
 		if (tmp.nChaves >= t) {
 			atualizaNo(no);
 			remove(tmp, chave);
 			return;
-		}
+		}*/
+
+		remove(tmp, chave);
+		return;
+	
 		
-		/*Se ambos os filhos predecessor e sucessor tiver um número mínimo de chave, o empréstimo de chaves não pode ser feito, isso leva a fusão dos filhos*/
+		
+		/*Se ambos os filhos predecessor e sucessor tiver um número mínimo de chave, o empréstimo de chaves não pode ser feito, isso leva a fusão dos filhos
 		if(true){
 			
-			System.out.println("Caso não seja o número mínimo");
+			//System.out.println("Caso não seja o número mínimo");
 			No b = null;
 			int divide = NULL;
 				
@@ -698,11 +582,14 @@ public class ArvoreB {
 				predecessor.chaves[predecessor.nChaves++] = divide;
 
 				for (int i = 0, j = predecessor.nChaves; i < sucessor.nChaves + 1; i++, j++) {
+
 					if (i < sucessor.nChaves) {
-					predecessor.chaves[j] = sucessor.chaves[i];
+						predecessor.chaves[j] = sucessor.chaves[i];
 					}
+					
 					predecessor.filhos[j] = sucessor.filhos[i];
 				}
+				
 				predecessor.nChaves += sucessor.nChaves;
 
 				if (no.nChaves == 0) {
@@ -716,10 +603,213 @@ public class ArvoreB {
 				atualizaNo(no);
 				remove(predecessor, chave);
 				return;
+			}
+		}
+		*/
+		
+
+	}
+
+
+	private void removeChave_noFolha(No no, int chave) throws IOException {
+
+		System.out.println("\n...Removendo de um NÓ FOLHA");
+		int i = 0;
+	
+		//Passa por todas as chaves para encontrar a posição, se encontrar passa para o outro for
+		for (i = 0; i < no.nChaves && no.chaves[i] != chave; i++){};
+	
+		System.out.println("Ultima posicao: " + i);
+	
+	
+		//Verifica se a posição chegou até o limite do nó, caso não chegou mova as chaves	
+		for(;i < no.nChaves-1; i++) { 
+			
+			//System.out.println("dentro " + i);
+			//if(i != 2 * t - 2)
+				no.chaves[i] = no.chaves[i+1];
+				//System.out.println("Caso esteja com a quantidade mínima " + i);
+			
+		}
+	
+		no.nChaves--;//Decrementa a quantidade
+		atualizaNo(no);//Atualiza no DISCO
+	
+	}
+
+
+
+	private void removeChave_noInterno(No no, int chave, int pos) throws IOException {
+
+		System.out.println("É FILHO");
+		System.out.println("FILHO " + no.filhos[pos]);
+		
+		//	CASO 2a = PREDECESSOR
+		//PREDECESSOR de nó, maior chave no filho esquerdo
+		No predecessor = leNo(no.filhos[pos]);
+
+		if(predecessor.nChaves >= t-1){ 
+			removeChave_noInterno_predecessor(no, predecessor, pos);
+			return;
+		}
+	
+	
+
+		//	CASO 2b = SUCESSOR				
+		System.out.println("SEGUNDA PARTE");
+		
+		//SUCESSOR, menor chave do filho direito
+		No sucessor = leNo(no.filhos[pos + 1]);		
+
+		//No sucessor tem pelo menos t chaves;
+		if(sucessor.nChaves >= t-1){
+			removeChave_noInterno_sucessor(no, sucessor, pos);
+			return;
+		}
+
+
+		int temp = predecessor.nChaves + 1;
+		predecessor.chaves[predecessor.nChaves++] = no.chaves[pos];
+
+		for(int i = 0, j = predecessor.nChaves; i < sucessor.nChaves; i++){
+			predecessor.chaves[j++] = sucessor.chaves[i];
+			predecessor.nChaves++;
+		}
+
+		//Movendo os filhos que está no sucessor para o predecessor
+		for(int i = 0; i < sucessor.nChaves + 1; i++){
+			predecessor.filhos[temp++] = sucessor.filhos[i];
+		}
+		
+		//Substituo o filho que foi removido pelo predecessor 
+		No removido = leNo(no.filhos[pos]);
+		removido = predecessor;
+		
+		//Ocupar as posições das chaves até a última posição
+		for (int i = pos; i < no.nChaves; i++) {
+			if (i != 2 * t - 2) {
+				no.chaves[i] = no.chaves[i + 1];
+			}
+		}
+		
+		//Ocupar as posições dos filhos, até a última posição
+		for (int i = pos + 1; i < no.nChaves + 1; i++) {
+			if (i != 2 * t - 1) {
+				no.filhos[i] = no.filhos[i + 1];
+			}
+		}
+		no.nChaves--;
+		
+		//Caso o nó que vai ser excluído a chave seja da raiz
+		if (no.nChaves == 0) {
+			if (no == raiz) {
+				raiz = leNo(no.filhos[0]);
+				trocaRaiz(no);
+			}
+			no = leNo(no.filhos[0]);
+		}
+		
+		atualizaNo(no);
+		remove(predecessor, chave);
+
+
+	}
+
+
+
+	private void removeChave_noInterno_predecessor(No no, No predecessor, int pos) throws IOException {
+
+		int auxChave = 0;
+		//No predecessor tem pelo menos t chaves, se tiver é substituído;
+
+		//executa várias vezes até chegar em uma folha e parar
+		for(;;){
+			if(predecessor.ehFolha()){
+				auxChave = predecessor.chaves[predecessor.nChaves - 1];
+				System.out.println("auxChave " + auxChave);
+				break;
+			} 
+			else { 
+				//Passando todas as chaves do nó para esse predecessor
+				predecessor = leNo(predecessor.filhos[predecessor.nChaves]);
+			}
+		}
+
+
+		no.chaves[pos] = auxChave;//Substituindo 
+		System.out.println("Substituindo " + no.chaves[pos]);
+		atualizaNo(no);
+		
+		//Eliminando recursivamente e substituindo por um predecessor
+		remove(predecessor, auxChave);
+
+	}
+
+
+
+
+	private void removeChave_noInterno_sucessor(No no, No sucessor, int pos) throws IOException {
+
+		int sucessorChave = sucessor.chaves[0];
+		//É substituído por um sucessor se tiver mais que a ordem 
+		
+		if(!sucessor.ehFolha()){
+			sucessor = leNo(sucessor.filhos[0]);
+		
+			for(;;){ 
+				if(sucessor.ehFolha()){
+					sucessorChave = sucessor.chaves[sucessor.nChaves - 1];
+					break;
+				}
+				else { 
+					sucessor = leNo(sucessor.filhos[sucessor.nChaves]);
 				}
 			}
 		}
+
+		no.chaves[pos] = sucessorChave;
+		atualizaNo(no);
+		remove(sucessor, sucessorChave);
+	
 	}
+
+
+
+	private void fusaoNo(No no, int chave) throws IOException{
+
+
+
+	}
+
+
+
+	private void preemtiveMerge(No no, int chave) throws IOException{
+
+		System.out.println("\n...Iniciando Preemtive Merge - NO: " + no.endereco);
+		System.out.println("\tTotal Chaves: " + no.nChaves);
+
+		if (no.nChaves <= t){
+			
+			int pos = 0;
+			for (; pos < chave && pos < no.nChaves; pos++){}
+
+			No proximoFilho = leNo(no.filhos[pos]);
+			System.out.println("\tPrimeiro FILHO = NO.endereco: " + proximoFilho.endereco);
+
+			if (proximoFilho.nChaves <= t){
+
+				System.out.println("\n\tFilho precisa de Merge!");
+
+			}
+
+		}
+
+	}
+
+
+
+
+
 	
 
 	//Método para saber a quantidade de memória usada no programa, será usado na bateria de testes.

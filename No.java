@@ -8,9 +8,9 @@ public class No {
 	private static final int TRUE = 1;
 	private static final int FALSE = 0;
 	private static final int NULL = -1;
-  private int t;
+  	private int t;
 
-  int folha;
+  	int folha;
 	int nChaves;
 	int endereco;//endereço dos Nó;
 	int[] filhos, chaves;

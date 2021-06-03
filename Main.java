@@ -17,9 +17,13 @@ class Main {
 
 	public static void main(String[] args) throws IOException {
 		
-		int ordem = 4;
+		int ordem = 2;
 		String nomeArvore = "arvore_b.txt";
 		DebugArvore debug = new DebugArvore();
+
+		File del = new File(nomeArvore);
+		del.delete();
+
 		ArvoreB arvB = new ArvoreB(ordem,nomeArvore);
     
     
@@ -32,13 +36,24 @@ class Main {
 		arvB.insereChave(7);
 		arvB.insereChave(8);
 		arvB.insereChave(9);
-    
+		/*
+		arvB.insereChave(10);
+		arvB.insereChave(11);
+		arvB.insereChave(12);
+		arvB.insereChave(13);
+		arvB.insereChave(13);
+		arvB.insereChave(13);
+		*/
 	
-
 	
-	    debug.imprimeArvore(arvB);
+	    //debug.imprimeArvore(arvB);
 
-		arvB.remove(4);
+		arvB.remove(8);
+		arvB.remove(9);
+
+		debug.imprimeArvore(arvB);
+
+		
 		
 		if (arvB.buscaB(2))
 			System.out.println("Número encontrado");
