@@ -17,6 +17,7 @@ public class Simulacao{
 	private int ordem;
 	private Random rand = new Random(12345);
 	private int[] vetorTeste;
+	private DebugArvore debug = new DebugArvore();
 	
 
 
@@ -32,11 +33,9 @@ public class Simulacao{
 		this.vetorTeste = new int[1000000];
 
 		// Cria vetor com 1 milhao de valores de teste		
-		for(int i = 0; i < 1000000; i++){
+		for(int i = 0; i < 1000000; i++)
 			this.vetorTeste[i] = rand.nextInt();			
-			//System.out.println("Num criado: " + this.vetorTeste[i]);
-		}
-
+		
 	}
 
 
@@ -44,18 +43,23 @@ public class Simulacao{
 
 	public void simulaTudo() throws IOException {
 
-		// TESTES DE INSERCAO
-		//System.out.print("Numero Testes: ");
+		// TESTES 
+		System.out.print("Numero Testes: ");
 		for (int i = 10; i <= 10000; i+=1000){
 			
 			this.arvB = new ArvoreB(this.ordem, "arv.txt");
-			//System.out.print(i + ", ");
+			System.out.print(i + ", ");
 
-			// (i) Primeiros
-			this.simulaInsercao(i);			
+			// TESTES DE INSERÇÃO
+			simulaInsercao(i);			
+
+			//debug.imprimeArvore(this.arvB);
 			
 			// TESTES DE BUSCA
 			simulaBusca(i);
+
+			// 	TESTES DE REMOÇÃO
+			//simulaRemocao(i);
 
 			// Corrigi numero para manter arredondamento
 			i = i == 10 ? 0 : i;
@@ -63,10 +67,8 @@ public class Simulacao{
 			//Apaga arquivo
 			File file = new File("arv.txt");
 			file.delete();	
+
 		}
-
-		
-
 
 	}
 
@@ -76,12 +78,13 @@ public class Simulacao{
 		medidor.comeca("");
 
 		// Inserindo as chaves
-		for(int j = 0; j < tamanho; j++)
-			arvB.insereChave(this.vetorTeste[j]);
-		
+		for(int i = 0; i < tamanho; i++){
+			//System.out.println("\nInserindo ( " + i + " ): " + vetorTeste[i]);
+			arvB.insereChave(this.vetorTeste[i]);
+		}
 
 		long tempo = medidor.termina();
-		//System.out.print("\t\t\t" + tempo + "\t");
+		//System.out.println("Inserido " + tamanho + " chaves");
 
 		gravarLogInsercao("TIPO:INSERCAO,QTD:"+ tamanho + ",TEMPO:" + tempo);
 
@@ -89,37 +92,73 @@ public class Simulacao{
 
 	private void simulaBusca(int tamanho) throws IOException {
 
-		int existente;
-		int naoExistente;		
+		int existente, naoExistente, contador;		
 		long tempo;
 		boolean temp;
+		contador = 0;
 
 		// 1.000 buscas repetidas
 		medidor.comeca("");
-		for(int i = 0; i < 10000; i++){
-			existente = this.vetorTeste[i];
-			temp = this.arvB.buscaB(existente);
+		while(contador < 1000){
+
+			for(int i = 0; i < tamanho && contador < 1000; i++){
+				contador++;
+				existente = this.vetorTeste[i];
+				temp = this.arvB.buscaB(existente);				
+			}
+
 		}
-		
-		tempo = medidor.termina();
-		
-		//System.out.print(tempo);
+	
+		tempo = medidor.termina();		
 		gravarLogBusca("TIPO:BUSCA,SUB-TIPO:EXISTENTE,TAMANHO:" + tamanho + ",TEMPO:" + tempo);
-		//System.out.println("\t\t\t !! Encontrado !!");
 		
 
 		medidor.comeca("");		
-		for(int i = 0; i < 10000; i++){
+
+		for(int i = 0; i < 1000; i++){
 			naoExistente = this.vetorTeste[i]+1;
 			temp = arvB.buscaB(naoExistente);
+			//System.out.println("Buscando inexistentes ( " + i + " ): " + naoExistente + " = " + temp);
 		}
 		
 		tempo = medidor.termina();
-		//System.out.println(tempo);
 		gravarLogBusca("TIPO:BUSCA,SUB-TIPO:NAO_EXISTENTE,TAMANHO:" + tamanho + ",TEMPO:" + tempo);
-		//System.out.println("\t\t\t !! Encontrado !!");	
 
 	}
+
+
+	public void simulaRemocao(int tamanho) throws IOException{
+
+		tamanho = (int) tamanho;
+
+		long tempo;
+		int existente;
+		medidor.comeca("");
+
+		
+		for(int i= 0; i < tamanho; i++){
+			
+			existente = this.vetorTeste[i];
+
+			//System.out.print("\nRemovendo... " + existente);
+
+			if (existente == 823326195)
+				System.out.println("\n\n!! STOP 1 !!");
+
+			arvB.remove(existente);
+
+			//debug.imprimeArvore(this.arvB);
+
+		}
+
+		tempo = medidor.termina();
+
+		gravarLogRemocao("TIPO:REMOCAO,SUB-TIPO:EXISTENTE,TAMANHO:" + tamanho + ",TEMPO:" + tempo);
+
+
+
+	}
+
 
 
 
@@ -132,6 +171,9 @@ public class Simulacao{
 		gravarArquivoLog("log_busca.txt", log);
 	}
 
+	public void gravarLogRemocao(String log) throws IOException{
+		gravarArquivoLog("log_remocao.txt", log);
+	}
 
 	private void gravarArquivoLog(String arquivoLog, String log)throws IOException{
 
