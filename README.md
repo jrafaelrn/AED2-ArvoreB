@@ -75,7 +75,7 @@ Para execucar o programa, basta executar o comando: `java Main`
 ---
 ### **Resultados**
 
-#### Resumidamente, foi possível observar que nos HDs, quanto **maior a ordem** da árvore, **menor é o tempo gasto** para inserções, da maior para a menor ordem, elas tiverem uma **redução** de tempo de aproximadamente **85%.** Por fim, pode-se concluir que **ordens de árvores maiores trazem sempre um desempenho melhor**, independente do hardware utilizado, conforme pode ser visto abaixo *(eixo horizontal = ordem, eixo vertical = tempo total)*.
+#### Resumidamente, foi possível observar que nos HDs, quanto **maior a ordem** da árvore, **menor é o tempo gasto**, da maior para a menor ordem, elas tiverem uma **redução** de tempo de aproximadamente **85%.** Por fim, pode-se concluir que **ordens de árvores maiores trazem sempre um desempenho melhor**, independente do hardware utilizado, conforme pode ser visto abaixo *(eixo horizontal = ordem, eixo vertical = tempo total)*.
 <br>
 
 ![](/img/conclusao_exemplo.jpg)
