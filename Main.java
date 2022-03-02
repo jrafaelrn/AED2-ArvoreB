@@ -1,94 +1,61 @@
+/*****************************************************************************************				
+*																						 *
+****************	TRABALHO DE AED2: BUSCA E INSERCAO EM ARVORE B 		******************
+*											               								 *
+*		NOME: 	JOSE RAFAEL RODRIGUES NASCIMENTO		    							 * 
+*		NOME: 	LUIZ FERNANDO CONCEIÇÃO DOS SANTOS      							     *
+*																						 *
+*		PROFESSOR:	ALEXANDRE DA SILVA FREIRE											 *
+*																						 *
+****************************************************************************************/
+
 import java.io.IOException;
+import java.io.File;
 
 
 class Main {
 
 	public static void main(String[] args) throws IOException {
 
-		MedidorTempo medidor = new MedidorTempo();
-		DebugArvore debug = new DebugArvore();
-		int ordem = 2;
+		MedidorTempo medidorTotal = new MedidorTempo();
 
-		medidor.comeca("ArvoreB");
+		Simulacao simulacao; 
+		int tMaximo = 10000;
+		int i = 2;
 
-		ArvoreB arvB = new ArvoreB(ordem, "arv.txt");
-		No no = arvB.getRaiz();
+		medidorTotal.comeca("");
 
-		debug.imprimeArvore(arvB);
-   
-   /*
-    	arvB.insereChave(9);
-		arvB.insereChave(10);
-		arvB.insereChave(6);
-		arvB.insereChave(3);
-		arvB.insereChave(20);
-		arvB.insereChave(2);
-		arvB.insereChave(5);
-		arvB.insereChave(8);
+		//	Testa diversos valores para T
+		while(i <= tMaximo){
+			
+			System.out.println("\n*** Simulando com T = " + i + "/" + tMaximo);
+			
+			simulacao = new Simulacao(i);
+			simulacao.simulaTudo();
 
-		System.out.println(" ----------------------- ");
-		System.out.print("RAIZ DA ARVORE: ");
-		arvB.mostrar();
-		*/
+			//Padronizacao dos valores
+			if (i < 10)
+				i++;
+			else
+				if (i < 50)
+					i+=10;
+				else
+					if (i < 100)
+						i+=50;
+					else
+						if (i < 1000)
+							i+=100;
+						else
+							i+=1000;
 
-  		
+		}
 		
-    
+	long tempoTotal = medidorTotal.termina();
+	System.out.println("\n\nTempo TOTAL\t" + tempoTotal + "\n");
+	System.out.println("FIIIM");
 
-    
-  /* 
-    if (arvB.buscaB(11)) {
-      System.out.println("\nCHAVE ESTÁ PRESENTE");
-    } else {
-      System.out.println("\nCHAVE NÃO ESTÁ");
-    }
-    
-		medidor.termina("ArvoreB");		
-	  arvB.obterMemoriaUsada();		
-   */
-  /*
-		System.out.println("\n...... Imprimindo arvore da RAM ......");
-		debug.imprimeArvore(arvB);
-    
-    
-		System.out.println("\n...... Imprimindo arvore do DISCO ......");
-		ArvoreB arvB2 = new ArvoreB(3, "arv.txt");
-		debug.imprimeArvore(arvB2);
-    
-    arvB2.insereChave(2);
-    
-*/
-
-/*
-		for(int i = 0; i < 5; i++){
-			no.chaves[i] = i;
-			no.nChaves++;
-		}
-*/
-
-
-/*
-		//Convert c = new Convert();
-		//c.converte("arv.txt");
-
-
-
-/*
-		try{
-			Simulacao simulacao = new Simulacao();
-
-			//	Testa diversos valores para T
-			for(int i = 1; i <= 1000; i+=50){
-				System.out.println("Simulando com T = " + i);
-				simulacao.simula(i);
-			}
-	  	}
-		catch (Exception e){
-			System.out.println("ERRO NA SIMULAÇÃO");
-	      	e.printStackTrace();
-
-		}
-*/
   }
+
+
 
 }
