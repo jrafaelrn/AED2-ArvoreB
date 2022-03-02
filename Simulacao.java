@@ -55,7 +55,7 @@ public class Simulacao{
 			//debug.imprimeArvore(this.arvB);
 			
 			// TESTES DE BUSCA
-			//simulaBusca(i);
+			simulaBusca(i);
 
 			// 	TESTES DE REMOÇÃO
 			simulaRemocao(i);

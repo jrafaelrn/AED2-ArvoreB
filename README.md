@@ -1,6 +1,12 @@
-## AED2-EP1-Arvore-B
+## AED2-EP1 - Busca e Inserção em Árvore B
 
-![Exemplo de Árvore B - Fonte: Wikipédia](https://pt.wikipedia.org/wiki/%C3%81rvore_B#/media/Ficheiro:B-tree-definition.png)
+#### O uso de árvores B tem o intuito de maximizar a eficiência do processo de leitura/escrita baseado na forma de operação dos discos rígidos (HDs), ou seja, aproveitar a posição da cabeça de leitura/escrita e  ler/gravar, em blocos, uma sequência de bits.
+
+<br>
+
+Exemplo de Árvore B:
+
+![Fonte: Wikipédia](https://upload.wikimedia.org/wikipedia/commons/9/92/B-tree-definition.png)
 
 <br>
 
@@ -8,67 +14,56 @@
 ### Estrutura das Classes
 
 - **Main**
-    - Classe que ~~(meio obviamente)~~ contém o método `main`, ou seja, o que é chamado ao se iniciar o programa, e com isso .
-    
+    - Classe que ~~(meio obviamente)~~ contém o método `main`, ou seja, o que é chamado ao se iniciar o programa e com isso roda uma série de simulações para diferentes valores de `t` (tamanho da árvore), fazendo uso da classe `Simulacao`, conforme descrito abaixo. 
+
+    - O código atual contempla a simulação de árvores com as seguintes ordens: 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1.000, 2.000, 3.000, 4.000, 5.000, 6.000, 7.000, 8.000, 9.000 e 10.000.
+
     <br>
-
-    - Exemplo de análise:
-
-        ![](img/conclusao.jpg)
-
 
 - **Simulação**
-    -  Responsável por executar uma simulação completa dos 2 algoritmos, dado o **tamanho**, uma **probabilidade** e um **custo máximo**. Isso é feito gerando inicialmente um Digrafo "normal" e rodando os algoritmos e depois é gerado um DAG *(Directed Acyclic Graphs - Digrafo Acíclico)* e rodado novamente os algoritmos. 
-    Nesse processo também são calculados os tempos gastos para processamento (através do objeto *MedidorTempo*, conforme descrito abaixo), e por fim, são armazenados os resultados num arquivo **log** para análise posterior.
+    -  Responsável por executar os "blocos" de simulações, ou seja, rodar os métodos de **insercao**, **busca** e **remocao** *(implementados na classe `ArvoreB`, conforme descrito abaixo)*, permitindo compor diferentes cenários:
 
-    <br>
+        - **Inserções:** foram testadas as seguinte quantidades de inserções: 10, 1.000, 2.000, 3.000, 4.000, 5.000, 6.000, 7.000, 8.000, 9.000 e 10.000.
 
-    - Exemplo do arquivo de log (usado como base para gerar o gráfico acima):
+        - **Busca:** independente do tamanho da árvore, foram feitas apenas 1.000 buscas em cada simulação, considerando em 2 tipos:
+            - *Existente:* foram procurados valores distintos  que certamente estariam na árvore
+            - *Inexistente:* foram procurados valores que muito provavelmente não estariam na árvore
 
-        ![](img/log.jpg)
+        - **Remoções:** foram removidos valores de `0` até `tamanhoArvore-1` em cada rodada da simulação, mas como os números das chaves são gerados de forma aleatória, não há garantia que dê fato ocorra a exclusão. De qualquer forma, quando ocorre, todo o tratamento necessário para manter a árvore B consistente é feito, como os "merge" e "split".
+
+    - Nesse processo também são armazenados os tempos de início e fim da execução de cada etapa do algoritmo *(através do objeto instanciado pela classe `MedidorTempo`, conforme descrito abaixo)*, sendo salvos separadamente, `log_insercao.txt`, `log_busca.txt` e `log_remocao.txt`, para posterior análise. 
+
+        Exemplo do arquivo de `log_insercao.txt`:
+
+
+        ![](img/log_insercao_exemplo.jpg)
 
     <br>
 
 - **ArvoreB**
-    - Classe responsável por armazenar a estrutura do digrafo, ou seja, a **quantidade de vértices**, o **número de arcos** e o estado de conexão entre os vértices (**lista de adjacência**), representado por instâncias do *Link*, conforme descrito abaixo.
+    - Classe responsável por armazenar a estrutura da Árvore B, como por exemplo a **ordem**, o tamanho do **nó interno** e do **nó folha**, o número máximo de **chaves** e **filhos**, uma referência para o **No** raiz, etc. 
+
+    - Essa classe implementa de fato os métodos de **inserção**, **busca** e **remoção**, além dos demais métodos que auxiliam nesse processo, como a **troca de raiz**, o **split** e o **merge**, por exemplo.
+    
 
     <br>
 
 - **No**
-    - Com essa classe é possível instanciar objetos que representam o grafo acíclico dirigido (DAG), ou seja, isso ...
+    - Com essa classe é possível instanciar objetos que representam um único nó na árvore B e armazenar o estado completo dele, sendo principalmente, o **número de chaves**, a **folha**, o **endereco** do No, além de um vetor para armazenar as chaves e um vetor para armazenar os filhos.
+
+    - Aqui também são implementados os métodos para `importarChave`, `importarFilhos` e as "transferências" de chaves da direita -> esqueda e vice-versa.
     
     <br>
 
-
-- **Link**
-    - Classe responsável por armazenar o estado de conexão entre os vértices (arcos), contendo a **posição do vértice de destino**, o **custo** e um apontamento pra outro objeto do tipo **Link**.
-
-    <br>
-
-- **BellmanFord**
-    - Esta classe é responsável por implementar o algoritmo de **Bellman-Ford**,  e também disponibiliza um método **caminhosMinimos()** para executar o mesmo, necessitando para isso, receber um objeto do tipo **Digrafo**, um **vértice de origem** e um **custo máximo**.
-
-    <br>
-
-- **Dijkstra**
-    - Classe que implementa o algoritmo de **Dijkstra**, e também disponibiliza um método **caminhosMinimos()** para executar o mesmo, necessitando para isso, receber um objeto do tipo **Digrafo** e um **vértice de origem**.
-
-    <br>
-
-
-- **MinHeap**
-    -  Nesta classe é implementado a estrutura de dados "Heap" (mais especificamente min-heap), que permite armazenar um conjunto de elementos de forma ordenada, de modo que o primeiro elemento é o menor, e o último é o maior. São disponbilizados métodos para inserir, remover e atualizar os elementos. 
-    <br>Isso é usado como uma fila de prioridade para a execução do algoritmo de **Dijkstra**.
-
-    <br>
-
-
 - **MedidorTempo**
-    - Responsável por calcular o tempo total gasto em cada simulação de cada algoritmo; para não existir interferência nos valores devido a outros processos rodando na máquina durante as simulações, foi usado a classe **ManagementFactory** e **ThreadMXBean**, retornando o tempo total de CPU para o processo específico atual em nanossegundos, que depois foi convertido para milissegundos para melhor visualização.
+    - Responsável por armazenar e calcular o tempo total gasto entre dois momentos distintos, considerando todas as operações de CPU, Entrada/Saída, entre outras chamadas de sistema. Como a porção de tempo de E/S é relativamente superior (e é isso que pretende-se analisar nesse EP), o tempo gasto com as demais operações será diluído/irrelevante entre as simulações.
 
     <br>
 
+- **DebugArvore**
+    - Usada apenas para fins de debug, pois ela imprime na tela o estado atual da árvore.
 
+    <br>
 ---
 ### Compilação e Execução
 Para compilar o código, basta executar o comando: `javac Main.java`
@@ -78,7 +73,15 @@ Para execucar o programa, basta executar o comando: `java Main`
 <br>
 
 ---
-**Créditos**
+### Resultados
+
+#### Resumidamente, foi possível observar que nos HDs, quanto **maior a ordem** da árvore, **menor é o tempo gasto** para inserções, da maior para a menor ordem, elas tiverem uma **redução** de tempo de aproximadamente **85%.** Por fim, pode-se concluir que **ordens de árvores maiores trazem sempre um desempenho melhor**, independente do hardware utilizado.
+
+
+<br>
+
+---
+### Créditos
 
 Professor: Alexandre Freire
 
